@@ -22,15 +22,12 @@ namespace AntDesign
         {
             if (Property != null)
             {
-                if (IsHeader)
-                {
+               
                     GetFieldExpression = Property;
-                }
-                else if (IsBody)
-                {
+            
                     var compliedProperty = Property.Compile();
                     GetValue = rowData => compliedProperty.Invoke(((RowData<TItem>)rowData).Data);
-                }
+                
                 base.OnInitialized();
             }
         }

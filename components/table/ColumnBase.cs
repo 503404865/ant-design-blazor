@@ -88,7 +88,7 @@ namespace AntDesign
         public int ColIndex { get; set; }
 
         protected bool AppendExpandColumn => Table.HasExpandTemplate && ColIndex == (Table.TreeMode ? Table.TreeExpandIconColumnIndex : Table.ExpandIconColumnIndex);
-
+        protected bool IsFiexedEllipsis=> Ellipsis&& Fixed is "left" or "right";
         private string _fixedStyle;
 
         private ColumnAlign _align = ColumnAlign.Left;
@@ -99,7 +99,7 @@ namespace AntDesign
 
         private int ColEndIndex => ColIndex + ActualColumnSpan;
 
-        public RowData RowData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        //public RowData RowData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private void SetClass()
         {
@@ -223,10 +223,10 @@ namespace AntDesign
             return cssStyleBuilder.Build();
         }
 
-        protected void ToggleTreeNode()
+        protected void ToggleTreeNode(RowData rowData)
         {
-            RowData.Expanded = !RowData.Expanded;
-            Table?.OnExpandChange(RowData);
+            rowData.Expanded = !rowData.Expanded;
+            Table?.OnExpandChange(rowData);
         }
     }
 }

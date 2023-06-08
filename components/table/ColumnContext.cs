@@ -31,39 +31,8 @@ namespace AntDesign
 
             column.ColIndex = CurrentColIndex++;
             Columns.Add(column);
-        }
 
-        public void AddHeaderColumn(IColumn column)
-        {
-            if (column == null)
-            {
-                return;
-            }
-
-            var columnSpan = column.HeaderColSpan;
-            if (column.RowSpan == 0) columnSpan = 0;
-
-            do
-            {
-                if (++CurrentColIndex >= Columns.Count)
-                {
-                    CurrentColIndex = 0;
-                    if (ColIndexOccupied != null)
-                    {
-                        foreach (ref var item in ColIndexOccupied.AsSpan())
-                        {
-                            if (item > 0) item--;
-                        }
-                    }
-                }
-            }
-            while (ColIndexOccupied != null && ColIndexOccupied[CurrentColIndex] > 0);
-
-            column.ColIndex = CurrentColIndex;
-            //HeaderColumns.Add(column);
-            CurrentColIndex += columnSpan - 1;
-
-            if (column.RowSpan > 1)
+             if (column.RowSpan > 1)
             {
                 ColIndexOccupied ??= new int[Columns.Count];
                 for (var i = column.ColIndex; i <= CurrentColIndex; i++)
@@ -99,6 +68,40 @@ namespace AntDesign
                     ColIndexOccupied[i] = column.RowSpan;
                 }
             }
+
+        }
+
+        public void AddHeaderColumn(IColumn column)
+        {
+            if (column == null)
+            {
+                return;
+            }
+
+            var columnSpan = column.HeaderColSpan;
+            if (column.RowSpan == 0) columnSpan = 0;
+
+            do
+            {
+                if (++CurrentColIndex >= Columns.Count)
+                {
+                    CurrentColIndex = 0;
+                    if (ColIndexOccupied != null)
+                    {
+                        foreach (ref var item in ColIndexOccupied.AsSpan())
+                        {
+                            if (item > 0) item--;
+                        }
+                    }
+                }
+            }
+            while (ColIndexOccupied != null && ColIndexOccupied[CurrentColIndex] > 0);
+
+            column.ColIndex = CurrentColIndex;
+            //Columns.Add(column);
+            CurrentColIndex += columnSpan - 1;
+
+           
         }
 
         public void AddColGroup(IColumn column)
@@ -150,9 +153,11 @@ namespace AntDesign
         {
             if (column.ColIndex == Columns.Count - 1)
             {
+            }
+
+            
                 // Header columns have all been initialized, then we can invoke the first change.
                 _table.OnColumnInitialized();
-            }
         }
     }
 }

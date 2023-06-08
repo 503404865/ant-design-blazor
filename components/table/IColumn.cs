@@ -26,7 +26,7 @@ namespace AntDesign
 
         public string Width { get; set; }
 
-        public RowData RowData { get; set; }
+        //public RowData RowData { get; set; }
 
         public int ColSpan { get; set; }
 

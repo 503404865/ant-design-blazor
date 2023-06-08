@@ -69,9 +69,9 @@
                 builder.AddContent(1,@<td class="ant-table-cell ant-table-row-expand-icon-cell">
                     @if (Table.RowExpandable(rowData) && (!Table.TreeMode || !rowData.HasChildren))
                     {
-                        <button type="button" @onclick="ToggleTreeNode"
+                <button type="button" @onclick="()=>ToggleTreeNode(rowData)"
                             class="ant-table-row-expand-icon @(rowData.Expanded?"ant-table-row-expand-icon-expanded":"ant-table-row-expand-icon-collapsed")"
-                            aria-label="@(RowData.Expanded?Table.Locale.Collapse:Table.Locale.Expand)"></button>
+                            aria-label="@(rowData.Expanded?Table.Locale.Collapse:Table.Locale.Expand)"></button>
                     }
                 </td>);
             }
@@ -80,10 +80,10 @@
             builder.AddContent(2,@<td class="@ClassMapper.Class" style="@FixedStyle @Style" rowspan="@RowSpan" colspan="@ColSpan" data-label="@title">
                 @if (ColIndex == Table.TreeExpandIconColumnIndex && Table.TreeMode)
                 {
-                    <span class="ant-table-row-indent indent-level-@RowData.Level" style="padding-left: @((CssSizeLength)(RowData.Level * Table.IndentSize));"></span>
+                    <span class="ant-table-row-indent indent-level-@rowData.Level" style="padding-left: @((CssSizeLength)(rowData.Level * Table.IndentSize));"></span>
                     @if (rowData.HasChildren)
                     {
-                        <button type="button" @onclick="ToggleTreeNode" class="ant-table-row-expand-icon @(RowData?.Expanded==true?"ant-table-row-expand-icon-expanded":"ant-table-row-expand-icon-collapsed")" aria-label="@(RowData?.Expanded==true?Table.Locale.Collapse:Table.Locale.Expand)"></button>
+                        <button type="button" @onclick="()=>ToggleTreeNode(rowData)" class="ant-table-row-expand-icon @(rowData?.Expanded==true?"ant-table-row-expand-icon-expanded":"ant-table-row-expand-icon-collapsed")" aria-label="@(rowData?.Expanded==true?Table.Locale.Collapse:Table.Locale.Expand)"></button>
                     }
                     else
                     {

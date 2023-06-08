@@ -167,49 +167,45 @@ namespace AntDesign
 
             Sortable = Sortable || SorterMultiple != default || SorterCompare != default || DefaultSortOrder != default || SortDirections?.Any() == true;
 
-            if (IsHeader)
+
+            if (FieldExpression != null)
             {
-                if (FieldExpression != null)
+                if (FieldExpression.Body is not MemberExpression memberExp)
                 {
-                    if (FieldExpression.Body is not MemberExpression memberExp)
-                    {
-                        throw new ArgumentException("'Field' parameter must be child member");
-                    }
-
-                    var paramExp = Expression.Parameter(ItemType);
-                    var bodyExp = Expression.MakeMemberAccess(paramExp, memberExp.Member);
-                    GetFieldExpression = Expression.Lambda(bodyExp, paramExp);
-                }
-                else if (DataIndex != null)
-                {
-                    (_, GetFieldExpression) = ColumnDataIndexHelper<TData>.GetDataIndexConfig(this);
+                    throw new ArgumentException("'Field' parameter must be child member");
                 }
 
-                if (GetFieldExpression != null)
-                {
-                    var member = ColumnExpressionHelper.GetReturnMemberInfo(GetFieldExpression);
-                    DisplayName = member?.GetCustomAttribute<DisplayNameAttribute>(true)?.DisplayName
-                               ?? member?.GetCustomAttribute<DisplayAttribute>(true)?.GetName()
-                               ?? member?.Name;
-                    FieldName = DataIndex ?? member?.Name;
-                }
-
-                if (Sortable && GetFieldExpression != null)
-                {
-                    SortModel = new SortModel<TData>(this, GetFieldExpression, FieldName, SorterMultiple, DefaultSortOrder, SorterCompare);
-                }
+                var paramExp = Expression.Parameter(ItemType);
+                var bodyExp = Expression.MakeMemberAccess(paramExp, memberExp.Member);
+                GetFieldExpression = Expression.Lambda(bodyExp, paramExp);
             }
-            else if (IsBody)
+            else if (DataIndex != null)
             {
-                if (!Table.HasRowTemplate)
-                {
-                    SortModel = (Context.Columns.LastOrDefault(x => x.ColIndex == ColIndex) as IFieldColumn)?.SortModel;
-                }
+                (_, GetFieldExpression) = ColumnDataIndexHelper<TData>.GetDataIndexConfig(this);
+            }
 
-                if (DataIndex != null)
-                {
-                    (GetValue, _) = ColumnDataIndexHelper<TData>.GetDataIndexConfig(this);
-                }
+            if (GetFieldExpression != null)
+            {
+                var member = ColumnExpressionHelper.GetReturnMemberInfo(GetFieldExpression);
+                DisplayName = member?.GetCustomAttribute<DisplayNameAttribute>(true)?.DisplayName
+                           ?? member?.GetCustomAttribute<DisplayAttribute>(true)?.GetName()
+                           ?? member?.Name;
+                FieldName = DataIndex ?? member?.Name;
+            }
+
+            if (Sortable && GetFieldExpression != null)
+            {
+                SortModel = new SortModel<TData>(this, GetFieldExpression, FieldName, SorterMultiple, DefaultSortOrder, SorterCompare);
+            }
+
+            if (!Table.HasRowTemplate)
+            {
+                SortModel = (Context.Columns.LastOrDefault(x => x.ColIndex == ColIndex) as IFieldColumn)?.SortModel;
+            }
+
+            if (DataIndex != null)
+            {
+                (GetValue, _) = ColumnDataIndexHelper<TData>.GetDataIndexConfig(this);
             }
 
             SortDirections ??= Table.SortDirections;
@@ -217,60 +213,59 @@ namespace AntDesign
             Sortable = Sortable || SortModel != null;
             _sortDirection = SortModel?.SortDirection ?? DefaultSortOrder ?? SortDirection.None;
 
-            if (IsHeader)
+
+            if (_hasFiltersAttribute)
             {
-                if (_hasFiltersAttribute)
-                {
-                    if (!_hasFilterableAttribute) Filterable = true;
-                    _columnFilterType = TableFilterType.List;
-                }
-                else if (_hasFilterableAttribute)
-                {
-                    _columnDataType = THelper.GetUnderlyingType<TData>();
-                    if (_columnDataType == typeof(bool))
-                    {
-                        _columnFilterType = TableFilterType.List;
-
-                        _filters = new List<TableFilter>();
-
-                        var trueFilterOption = GetNewFilter();
-                        trueFilterOption.Text = Table.Locale.FilterOptions.True;
-                        trueFilterOption.Value = true;
-                        ((List<TableFilter>)_filters).Add(trueFilterOption);
-                        var falseFilterOption = GetNewFilter();
-                        falseFilterOption.Text = Table.Locale.FilterOptions.False;
-                        falseFilterOption.Value = false;
-                        ((List<TableFilter>)_filters).Add(falseFilterOption);
-                    }
-                    else if (_columnDataType.IsEnum && _columnDataType.GetCustomAttribute<FlagsAttribute>() == null)
-                    {
-                        _columnFilterType = TableFilterType.List;
-
-                        _filters = EnumHelper<TData>.GetValueLabelList().Select(item =>
-                        {
-                            var filterOption = GetNewFilter();
-                            filterOption.Text = item.Label;
-                            filterOption.Value = item.Value;
-                            return filterOption;
-                        }).ToList();
-                    }
-                    else
-                    {
-                        _columnFilterType = TableFilterType.FieldType;
-                        InitFilters();
-                    }
-
-                    if (_columnFilterType == TableFilterType.List && THelper.IsTypeNullable<TData>())
-                    {
-                        var nullFilterOption = GetNewFilter();
-                        nullFilterOption.Text = Table.Locale.FilterOptions.IsNull;
-                        nullFilterOption.Value = null;
-                        ((List<TableFilter>)_filters).Add(nullFilterOption);
-                    }
-                }
-
-                Context.HeaderColumnInitialed(this);
+                if (!_hasFilterableAttribute) Filterable = true;
+                _columnFilterType = TableFilterType.List;
             }
+            else if (_hasFilterableAttribute)
+            {
+                _columnDataType = THelper.GetUnderlyingType<TData>();
+                if (_columnDataType == typeof(bool))
+                {
+                    _columnFilterType = TableFilterType.List;
+
+                    _filters = new List<TableFilter>();
+
+                    var trueFilterOption = GetNewFilter();
+                    trueFilterOption.Text = Table.Locale.FilterOptions.True;
+                    trueFilterOption.Value = true;
+                    ((List<TableFilter>)_filters).Add(trueFilterOption);
+                    var falseFilterOption = GetNewFilter();
+                    falseFilterOption.Text = Table.Locale.FilterOptions.False;
+                    falseFilterOption.Value = false;
+                    ((List<TableFilter>)_filters).Add(falseFilterOption);
+                }
+                else if (_columnDataType.IsEnum && _columnDataType.GetCustomAttribute<FlagsAttribute>() == null)
+                {
+                    _columnFilterType = TableFilterType.List;
+
+                    _filters = EnumHelper<TData>.GetValueLabelList().Select(item =>
+                    {
+                        var filterOption = GetNewFilter();
+                        filterOption.Text = item.Label;
+                        filterOption.Value = item.Value;
+                        return filterOption;
+                    }).ToList();
+                }
+                else
+                {
+                    _columnFilterType = TableFilterType.FieldType;
+                    InitFilters();
+                }
+
+                if (_columnFilterType == TableFilterType.List && THelper.IsTypeNullable<TData>())
+                {
+                    var nullFilterOption = GetNewFilter();
+                    nullFilterOption.Text = Table.Locale.FilterOptions.IsNull;
+                    nullFilterOption.Value = null;
+                    ((List<TableFilter>)_filters).Add(nullFilterOption);
+                }
+            }
+
+            Context.HeaderColumnInitialed(this);
+
 
             ClassMapper
                .If("ant-table-column-has-sorters", () => Sortable)

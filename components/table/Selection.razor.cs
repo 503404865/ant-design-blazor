@@ -32,7 +32,7 @@ namespace AntDesign
 
         private bool IsHeaderDisabled => RowSelections.All(x => x.Disabled);
 
-        private void OnCheckedChange(bool selected)
+        private void OnCheckedChange(bool selected, RowData rowData = null)
         {
             if (IsHeader)
             {
@@ -53,7 +53,7 @@ namespace AntDesign
                 }
                 else
                 {
-                    RowData.Selected = selected;
+                    rowData.Selected = selected;
                     Table.Selection.StateHasChanged();
                 }
             }

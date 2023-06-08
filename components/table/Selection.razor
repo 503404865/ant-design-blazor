@@ -35,7 +35,7 @@
     @<th class="@ClassMapper.Class ant-table-selection-column" style="@FixedStyle @HeaderStyle" @key="@Key" colspan="@HeaderColSpan">
         @if (Type == "checkbox")
             {
-                <Checkbox Checked="Table.AllSelected" CheckedChange="OnCheckedChange" Indeterminate="Indeterminate" Disabled="IsHeaderDisabled" />
+                <Checkbox Checked="Table.AllSelected" CheckedChange="(e)=>OnCheckedChange(e)" Indeterminate="Indeterminate" Disabled="IsHeaderDisabled" />
             }
             </th>
     ;
@@ -58,11 +58,11 @@
             {
                 @if (Type == "checkbox")
                 {
-                    <Checkbox Checked="rowData.Selected" Disabled="Disabled" CheckedChange="OnCheckedChange" />
+               <Checkbox Checked="rowData.Selected" Disabled="Disabled" CheckedChange="e=>OnCheckedChange(e,rowData)" />
                 }
                 else if (Type == "radio")
                 {
-                    <Radio Checked="rowData.Selected" Disabled="Disabled" CheckedChange="OnCheckedChange" TValue="bool" />
+               <Radio Checked="rowData.Selected" Disabled="Disabled" CheckedChange="e=>OnCheckedChange(e,rowData)" TValue="bool" />
                 }
             }
         </td>;
