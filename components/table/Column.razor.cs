@@ -10,10 +10,11 @@ using AntDesign.TableModels;
 using Microsoft.AspNetCore.Components;
 using System.Text.Json;
 using AntDesign.Core.Helpers;
+using AntDesign.Table;
 
 namespace AntDesign
 {
-    public partial class Column<TData> : ColumnBase, IFieldColumn
+    public partial class Column<TData> : ColumnBase, IFieldColumn, IRenderColumn
     {
         [CascadingParameter(Name = "AntDesign.Column.Blocked")]
         public bool Blocked { get; set; }
@@ -32,7 +33,7 @@ namespace AntDesign
         {
             get
             {
-                return GetValue != null ? GetValue(RowData) : _field;
+                return _field;
             }
             set
             {
@@ -202,7 +203,7 @@ namespace AntDesign
             {
                 if (!Table.HasRowTemplate)
                 {
-                    SortModel = (Context.HeaderColumns.LastOrDefault(x => x.ColIndex == ColIndex) as IFieldColumn)?.SortModel;
+                    SortModel = (Context.Columns.LastOrDefault(x => x.ColIndex == ColIndex) as IFieldColumn)?.SortModel;
                 }
 
                 if (DataIndex != null)

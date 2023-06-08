@@ -9,7 +9,7 @@ namespace AntDesign
     {
         public IList<IColumn> Columns { get; set; } = new List<IColumn>();
 
-        public IList<IColumn> HeaderColumns { get; set; } = new List<IColumn>();
+        //public IList<IColumn> HeaderColumns { get; set; } = new List<IColumn>();
 
         private int CurrentColIndex { get; set; }
 
@@ -60,7 +60,7 @@ namespace AntDesign
             while (ColIndexOccupied != null && ColIndexOccupied[CurrentColIndex] > 0);
 
             column.ColIndex = CurrentColIndex;
-            HeaderColumns.Add(column);
+            //HeaderColumns.Add(column);
             CurrentColIndex += columnSpan - 1;
 
             if (column.RowSpan > 1)
@@ -71,21 +71,6 @@ namespace AntDesign
                     ColIndexOccupied[i] = column.RowSpan;
                 }
             }
-        }
-
-        public void AddColGroup(IColumn column)
-        {
-            if (column == null)
-            {
-                return;
-            }
-
-            if (++CurrentColIndex >= Columns.Count)
-            {
-                CurrentColIndex = 0;
-            }
-
-            column.ColIndex = CurrentColIndex;
 
             if (_table.ScrollX != null && Columns.Any(x => x.Width == null))
             {
@@ -105,36 +90,6 @@ namespace AntDesign
                     column.Width = col.Width;
                 }
             }
-        }
-
-        public void AddRowColumn(IColumn column)
-        {
-            if (column == null)
-            {
-                return;
-            }
-
-            var columnSpan = column.ColSpan;
-            if (column.RowSpan == 0) columnSpan = 0;
-
-            do
-            {
-                if (++CurrentColIndex >= Columns.Count)
-                {
-                    CurrentColIndex = 0;
-                    if (ColIndexOccupied != null)
-                    {
-                        foreach (ref var item in ColIndexOccupied.AsSpan())
-                        {
-                            if (item > 0) item--;
-                        }
-                    }
-                }
-            }
-            while (ColIndexOccupied != null && ColIndexOccupied[CurrentColIndex] > 0);
-
-            column.ColIndex = CurrentColIndex;
-            CurrentColIndex += columnSpan - 1;
 
             if (column.RowSpan > 1)
             {
@@ -144,6 +99,51 @@ namespace AntDesign
                     ColIndexOccupied[i] = column.RowSpan;
                 }
             }
+        }
+
+        public void AddColGroup(IColumn column)
+        {
+            //if (column == null)
+            //{
+            //    return;
+            //}
+
+            //if (++CurrentColIndex >= Columns.Count)
+            //{
+            //    CurrentColIndex = 0;
+            //}
+
+            //column.ColIndex = CurrentColIndex;
+        }
+
+        public void AddRowColumn(IColumn column)
+        {
+            //if (column == null)
+            //{
+            //    return;
+            //}
+
+            //var columnSpan = column.ColSpan;
+            //if (column.RowSpan == 0) columnSpan = 0;
+
+            //do
+            //{
+            //    if (++CurrentColIndex >= Columns.Count)
+            //    {
+            //        CurrentColIndex = 0;
+            //        if (ColIndexOccupied != null)
+            //        {
+            //            foreach (ref var item in ColIndexOccupied.AsSpan())
+            //            {
+            //                if (item > 0) item--;
+            //            }
+            //        }
+            //    }
+            //}
+            //while (ColIndexOccupied != null && ColIndexOccupied[CurrentColIndex] > 0);
+
+            //column.ColIndex = CurrentColIndex;
+            //CurrentColIndex += columnSpan - 1;
         }
 
         internal void HeaderColumnInitialed(IColumn column)

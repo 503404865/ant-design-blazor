@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace AntDesign
 {
-    public class ColumnBase : AntDomComponentBase, IColumn
+    public abstract class ColumnBase : AntDomComponentBase, IColumn
     {
         [CascadingParameter]
         public ITable Table { get; set; }
@@ -29,8 +29,8 @@ namespace AntDesign
         [CascadingParameter]
         public ColumnContext Context { get; set; }
 
-        [CascadingParameter(Name = "RowData")]
-        public RowData RowData { get; set; }
+        //[CascadingParameter(Name = "RowData")]
+        //public RowData RowData { get; set; }
 
         [CascadingParameter(Name = "IsMeasure")]
         public bool IsMeasure { get; set; }
@@ -98,6 +98,8 @@ namespace AntDesign
         private int ActualColumnSpan => IsHeader ? HeaderColSpan : ColSpan;
 
         private int ColEndIndex => ColIndex + ActualColumnSpan;
+
+        public RowData RowData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         private void SetClass()
         {

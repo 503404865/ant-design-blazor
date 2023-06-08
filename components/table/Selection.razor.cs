@@ -3,10 +3,11 @@ using System.Linq;
 using AntDesign.Internal;
 using AntDesign.TableModels;
 using Microsoft.AspNetCore.Components;
+using AntDesign.Table;
 
 namespace AntDesign
 {
-    public partial class Selection : ColumnBase, ISelectionColumn
+    public partial class Selection : ColumnBase, ISelectionColumn, IRenderColumn
     {
         [Parameter] public string Type { get; set; } = "checkbox";
 
