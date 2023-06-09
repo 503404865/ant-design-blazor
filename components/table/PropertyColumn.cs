@@ -22,12 +22,12 @@ namespace AntDesign
         {
             if (Property != null)
             {
-               
-                    GetFieldExpression = Property;
-            
-                    var compliedProperty = Property.Compile();
-                    GetValue = rowData => compliedProperty.Invoke(((RowData<TItem>)rowData).Data);
-                
+
+                GetFieldExpression = Property;
+
+                var compliedProperty = Property.Compile();
+                GetValue = rowData => compliedProperty.Invoke(((RowData<TItem>)rowData).Data);
+
                 base.OnInitialized();
             }
         }

@@ -131,7 +131,7 @@
     );
     }
 
-    var cellData = new CellData<TData>(rowData, Field, Format);
+    var cellData = new CellData<TData>(rowData, fieldValue, Format);
     var cellAttributes = OnCell?.Invoke(cellData);
     builder.AddContent(2,
     @<CascadingValue Name="IsBody" Value="false"

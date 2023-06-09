@@ -32,7 +32,7 @@ namespace AntDesign
             column.ColIndex = CurrentColIndex++;
             Columns.Add(column);
 
-             if (column.RowSpan > 1)
+            if (column.RowSpan > 1)
             {
                 ColIndexOccupied ??= new int[Columns.Count];
                 for (var i = column.ColIndex; i <= CurrentColIndex; i++)
@@ -101,7 +101,7 @@ namespace AntDesign
             //Columns.Add(column);
             CurrentColIndex += columnSpan - 1;
 
-           
+
         }
 
         public void AddColGroup(IColumn column)
@@ -155,9 +155,9 @@ namespace AntDesign
             {
             }
 
-            
-                // Header columns have all been initialized, then we can invoke the first change.
-                _table.OnColumnInitialized();
+
+            // Header columns have all been initialized, then we can invoke the first change.
+            _table.OnColumnInitialized();
         }
     }
 }
