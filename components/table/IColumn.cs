@@ -10,14 +10,6 @@ namespace AntDesign
     {
         public ITable Table { get; set; }
 
-        public bool IsInitialize { get; set; }
-
-        public bool IsHeader { get; set; }
-
-        public bool IsPlaceholder { get; set; }
-
-        public bool IsColGroup { get; set; }
-
         public int ColIndex { get; set; }
 
         public string Fixed { get; set; }

@@ -15,10 +15,9 @@ namespace AntDesign
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            if (IsHeader)
-            {
-                Context.HeaderColumnInitialed(this);
-            }
+
+            Context.HeaderColumnInitialed(this);
+
         }
 
         protected override bool ShouldRender()

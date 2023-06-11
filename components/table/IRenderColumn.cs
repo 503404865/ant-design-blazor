@@ -20,6 +20,6 @@ namespace AntDesign.Table
 
         RenderFragment RenderHeader();
 
-        RenderFragment RenderBody(RowData rowData);
+        RenderFragment RenderBody<TItem>(RowData<TItem> rowData);
     }
 }

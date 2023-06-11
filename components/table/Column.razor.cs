@@ -29,22 +29,7 @@ namespace AntDesign
         public Expression<Func<TData>> FieldExpression { get; set; }
 
         [Parameter]
-        public TData Field
-        {
-            get
-            {
-                return _field;
-            }
-            set
-            {
-                if (GetValue == null)
-                {
-                    _field = value;
-                }
-            }
-        }
-
-        private TData _field;
+        public TData Field { get;set; }
 
         public override string Title { get => base.Title ?? DisplayName ?? FieldName; set => base.Title = value; }
 
@@ -167,21 +152,28 @@ namespace AntDesign
 
             Sortable = Sortable || SorterMultiple != default || SorterCompare != default || DefaultSortOrder != default || SortDirections?.Any() == true;
 
-
             if (FieldExpression != null)
             {
                 if (FieldExpression.Body is not MemberExpression memberExp)
                 {
-                    throw new ArgumentException("'Field' parameter must be child member");
+                    throw new ArgumentException($"'Field' parameter must be a property or a field of {ItemType}");
                 }
 
                 var paramExp = Expression.Parameter(ItemType);
                 var bodyExp = Expression.MakeMemberAccess(paramExp, memberExp.Member);
                 GetFieldExpression = Expression.Lambda(bodyExp, paramExp);
+
+                var rowDataParamExp = Expression.Parameter(typeof(RowData));
+                var rowDataType = typeof(RowData<>).MakeGenericType(ItemType);
+                var convertExp = Expression.Convert(rowDataParamExp, rowDataType);
+                var dataBodyExp = Expression.MakeMemberAccess(convertExp, rowDataType.GetMember(nameof(RowData<int>.Data))[0]);
+                var memberBodyExp = Expression.MakeMemberAccess(dataBodyExp, memberExp.Member);
+                var getValueLambda = Expression.Lambda<Func<RowData, TData>>(memberBodyExp, rowDataParamExp);
+                GetValue = getValueLambda.Compile(); // RowData=> ((RowData<TItem>)RowData).Data.{Member}
             }
             else if (DataIndex != null)
             {
-                (_, GetFieldExpression) = ColumnDataIndexHelper<TData>.GetDataIndexConfig(this);
+                (GetValue, GetFieldExpression) = ColumnDataIndexHelper<TData>.GetDataIndexConfig(this);
             }
 
             if (GetFieldExpression != null)
@@ -201,11 +193,6 @@ namespace AntDesign
             if (!Table.HasRowTemplate)
             {
                 SortModel = (Context.Columns.LastOrDefault(x => x.ColIndex == ColIndex) as IFieldColumn)?.SortModel;
-            }
-
-            if (DataIndex != null)
-            {
-                (GetValue, _) = ColumnDataIndexHelper<TData>.GetDataIndexConfig(this);
             }
 
             SortDirections ??= Table.SortDirections;
@@ -276,12 +263,9 @@ namespace AntDesign
         {
             base.OnParametersSet();
 
-            if (IsHeader)
-            {
-                FilterModel = _filterable && _filters?.Any(x => x.Selected) == true ?
-                    new FilterModel<TData>(this, GetFieldExpression, FieldName, OnFilter, _filters.Where(x => x.Selected).ToList(), _columnFilterType) :
-                    null;
-            }
+            FilterModel = _filterable && _filters?.Any(x => x.Selected) == true ?
+                new FilterModel<TData>(this, GetFieldExpression, FieldName, OnFilter, _filters.Where(x => x.Selected).ToList(), _columnFilterType) :
+                null;
         }
 
         protected override bool ShouldRender()

@@ -35,13 +35,13 @@
     @<th class="@ClassMapper.Class ant-table-selection-column" style="@FixedStyle @HeaderStyle" @key="@Key" colspan="@HeaderColSpan">
         @if (Type == "checkbox")
             {
-                <Checkbox Checked="Table.AllSelected" CheckedChange="(e)=>OnCheckedChange(e)" Indeterminate="Indeterminate" Disabled="IsHeaderDisabled" />
+                <Checkbox Checked="Table.AllSelected" CheckedChange="(e)=>OnCheckedChange(e,null,true)" Indeterminate="Indeterminate" Disabled="IsHeaderDisabled" />
             }
             </th>
     ;
     }
 
-    RenderFragment IRenderColumn.RenderBody(RowData rowData)
+    RenderFragment IRenderColumn.RenderBody<TItem>(RowData<TItem> rowData)
     {
        return @<td class="@ClassMapper.Class ant-table-selection-column" style="@FixedStyle @Style" @key="@Key" rowspan="@RowSpan" colspan="@ColSpan">
 

@@ -60,7 +60,7 @@
         };
     }
 
-    RenderFragment IRenderColumn.RenderBody(RowData rowData)
+    RenderFragment IRenderColumn.RenderBody<TItem>(RowData<TItem> rowData)
     {
         return builder =>
         {

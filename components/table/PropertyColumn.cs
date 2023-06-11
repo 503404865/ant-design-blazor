@@ -22,7 +22,6 @@ namespace AntDesign
         {
             if (Property != null)
             {
-
                 GetFieldExpression = Property;
 
                 var compliedProperty = Property.Compile();

@@ -3,6 +3,7 @@
 @using AntDesign.Core.Helpers
 @using AntDesign.TableModels
 @using AntDesign.Table
+@using System.Linq.Expressions;
 @typeparam TData
 
 
@@ -110,24 +111,24 @@
         };
     }
 
-    RenderFragment IRenderColumn.RenderBody(RowData rowData)
+    RenderFragment IRenderColumn.RenderBody<TItem>(RowData<TItem> rowData)
     {
         return builder =>
                 {
-    var fieldValue = GetValue != null ? GetValue(rowData) : _field;
-    var fieldText = !string.IsNullOrWhiteSpace(Format) ? Formatter<TData>.Format(fieldValue, Format) : fieldValue?.ToString();
+                    var fieldValue = GetValue != null ? GetValue(rowData) : default;
+                    var fieldText = !string.IsNullOrWhiteSpace(Format) ? Formatter<TData>.Format(fieldValue, Format) : fieldValue?.ToString();
 
-    if (AppendExpandColumn)
-    {
-        builder.AddContent(1,
-    @<td class="ant-table-cell ant-table-row-expand-icon-cell">
-        @if (Table.RowExpandable(rowData) && (!Table.TreeMode || !rowData.HasChildren))
-            {
-        <button type="button" @onclick="()=>ToggleTreeNode(rowData)" @onclick:stopPropagation
-            class="ant-table-row-expand-icon @(rowData.Expanded ? "ant-table-row-expand-icon-expanded" : "ant-table-row-expand-icon-collapsed")"
-            aria-label="@(rowData.Expanded ? Table.Locale.Collapse : Table.Locale.Expand)"></button>
-            }
-    </td>
+                    if (AppendExpandColumn)
+                    {
+                        builder.AddContent(1,
+                    @<td class="ant-table-cell ant-table-row-expand-icon-cell">
+                        @if (Table.RowExpandable(rowData) && (!Table.TreeMode || !rowData.HasChildren))
+                            {
+                        <button type="button" @onclick="()=>ToggleTreeNode(rowData)" @onclick:stopPropagation
+                            class="ant-table-row-expand-icon @(rowData.Expanded ? "ant-table-row-expand-icon-expanded" : "ant-table-row-expand-icon-collapsed")"
+                            aria-label="@(rowData.Expanded ? Table.Locale.Collapse : Table.Locale.Expand)"></button>
+                            }
+                    </td>
     );
     }
 
